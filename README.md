@@ -1,1 +1,1 @@
-# smartodo
+Cors middleware to assure the connection between front and backend

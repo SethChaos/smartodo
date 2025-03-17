@@ -8,16 +8,16 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-#allow cors to assure that the front end can access the backend
+# Allow CORS to assure that the front end can access the backend
 app.add_middleware(
     CORSMiddleware,
-      allow_origins=["http://localhost:3000"],
-      allow_credentials=True,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
 )
 
-#handle routing
+# Handle routing
 
 # Global variable to keep track of deleted tasks
 deleted = 0
@@ -30,23 +30,33 @@ def get_db():
         db.close()
 
 # Pydantic models for request validation
-class TaskCreate(BaseModel):
+class TaskBase(BaseModel):
     title: str
     description: str = None
 
-class TaskUpdate(BaseModel):
-    title: str = None
-    description: str = None
+class TaskCreate(TaskBase):
+    pass
+
+class TaskUpdate(TaskBase):
     is_complete: bool = None
 
+class TaskResponse(TaskBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+class BulkDeleteRequest(BaseModel):
+    task_ids: List[int]
+
 # Endpoint: GET unfinished tasks
-@app.get("/tasks", response_model=List[TaskCreate])
+@app.get("/tasks", response_model=List[TaskResponse])
 def get_tasks(db: Session = Depends(get_db)):
     tasks = db.query(Task).filter(Task.is_complete == False).all()
     return tasks
 
 # Endpoint: POST create a new task
-@app.post("/tasks")
+@app.post("/tasks", response_model=TaskResponse)
 def create_task(task: TaskCreate, db: Session = Depends(get_db)):
     new_task = Task(title=task.title, description=task.description)
     db.add(new_task)
@@ -55,7 +65,7 @@ def create_task(task: TaskCreate, db: Session = Depends(get_db)):
     return new_task
 
 # Endpoint: PUT update a task
-@app.put("/tasks/{task_id}")
+@app.put("/tasks/{task_id}", response_model=TaskResponse)
 def update_task(task_id: int, task: TaskUpdate, db: Session = Depends(get_db)):
     existing_task = db.query(Task).filter(Task.id == task_id).first()
     if not existing_task:
@@ -84,8 +94,9 @@ def delete_task(task_id: int, db: Session = Depends(get_db)):
 
 # Endpoint: DELETE multiple tasks (bulk delete)
 @app.delete("/tasks/bulk-delete")
-def bulk_delete_tasks(task_ids: List[int], db: Session = Depends(get_db)):
-    tasks = db.query(Task).filter(Task.id.in_(task_ids)).all()
+def bulk_delete_tasks(request: BulkDeleteRequest, db: Session = Depends(get_db)):
+    print("Received bulk delete request with task IDs:", request.task_ids)
+    tasks = db.query(Task).filter(Task.id.in_(request.task_ids)).all()
     if not tasks:
         raise HTTPException(status_code=404, detail="No tasks found for the provided IDs")
     for task in tasks:

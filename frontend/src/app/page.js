@@ -1,10 +1,8 @@
-// This is the main page component that will be rendered by the client-side app.
 "use client";
 
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchTasks } from "../redux/tasksSlice";
-import axios from "axios";
+import { fetchTasks, addTask, deleteTask, bulkDeleteTasks, updateTask } from "../redux/tasksSlice";
 
 export default function TasksPage() {
   const dispatch = useDispatch();
@@ -12,6 +10,9 @@ export default function TasksPage() {
   const [selectedTasks, setSelectedTasks] = useState([]);
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskDescription, setNewTaskDescription] = useState("");
+  const [editingTask, setEditingTask] = useState(null);
+  const [editTaskTitle, setEditTaskTitle] = useState("");
+  const [editTaskDescription, setEditTaskDescription] = useState("");
 
   useEffect(() => {
     if (status === "idle") {
@@ -19,27 +20,51 @@ export default function TasksPage() {
     }
   }, [status, dispatch]);
 
-  const handleAddTask = async () => {
-    await axios.post("http://localhost:8000/tasks", {
-      title: newTaskTitle,
-      description: newTaskDescription,
-    });
-    dispatch(fetchTasks());
+  const handleAddTask = () => {
+    if (newTaskTitle.trim() === "" || newTaskDescription.trim() === "") {
+      alert("Task title and description cannot be empty");
+      return;
+    }
+    dispatch(addTask({ title: newTaskTitle, description: newTaskDescription }));
     setNewTaskTitle("");
     setNewTaskDescription("");
   };
 
-  const handleDeleteTask = async (id) => {
-    await axios.delete(`http://localhost:8000/tasks/${id}`);
-    dispatch(fetchTasks());
+  const handleDeleteTask = (id) => {
+    if (id === undefined) {
+      console.error("Task ID is undefined");
+      return;
+    }
+    console.log("Deleting task with ID:", id);
+    dispatch(deleteTask(id));
   };
-  
-  const handleBulkDelete = async () => {
-    await axios.delete("http://localhost:8000/tasks/bulk-delete", {
-      data: { task_ids: selectedTasks },
-    });
+
+  const handleBulkDelete = () => {
+    if (selectedTasks.length === 0) {
+      alert("No tasks selected for deletion");
+      return;
+    }
+    const taskIds = selectedTasks.map(id => parseInt(id, 10));
+    console.log("Deleting tasks with IDs:", taskIds);
+    dispatch(bulkDeleteTasks({ task_ids: taskIds }));
     setSelectedTasks([]);
-    dispatch(fetchTasks());
+  };
+
+  const handleEditTask = (task) => {
+    setEditingTask(task);
+    setEditTaskTitle(task.title);
+    setEditTaskDescription(task.description);
+  };
+
+  const handleUpdateTask = () => {
+    if (editTaskTitle.trim() === "" || editTaskDescription.trim() === "") {
+      alert("Task title and description cannot be empty");
+      return;
+    }
+    dispatch(updateTask({ id: editingTask.id, task: { title: editTaskTitle, description: editTaskDescription } }));
+    setEditingTask(null);
+    setEditTaskTitle("");
+    setEditTaskDescription("");
   };
 
   return (
@@ -79,6 +104,7 @@ export default function TasksPage() {
             />{" "}
             {task.title}{" "}
             <button onClick={() => handleDeleteTask(task.id)}>Delete</button>
+            <button onClick={() => handleEditTask(task)}>Edit</button>
           </li>
         ))}
       </ul>
@@ -87,7 +113,27 @@ export default function TasksPage() {
           Delete Selected Tasks
         </button>
       )}
+      {editingTask && (
+        <div style={{ marginTop: "1rem" }}>
+          <h2>Edit Task</h2>
+          <input
+            type="text"
+            placeholder="Task Title"
+            value={editTaskTitle}
+            onChange={(e) => setEditTaskTitle(e.target.value)}
+          />
+          <br />
+          <textarea
+            placeholder="Task Description"
+            value={editTaskDescription}
+            onChange={(e) => setEditTaskDescription(e.target.value)}
+            style={{ display: "block", marginTop: "0.5rem" }}
+          />
+          <br />
+          <button onClick={handleUpdateTask}>Update Task</button>
+          <button onClick={() => setEditingTask(null)}>Cancel</button>
+        </div>
+      )}
     </div>
   );
 }
-// This is the main page component that will be rendered by the client-side app.
