@@ -36,7 +36,9 @@ export default function TasksPage() {
       return;
     }
     console.log("Deleting task with ID:", id);
-    dispatch(deleteTask(id));
+    dispatch(deleteTask(id)).then(() => {
+      dispatch(fetchTasks());
+    });
   };
 
   const handleBulkDelete = () => {
@@ -46,7 +48,9 @@ export default function TasksPage() {
     }
     const taskIds = selectedTasks.map(id => parseInt(id, 10));
     console.log("Deleting tasks with IDs:", taskIds);
-    dispatch(bulkDeleteTasks({ task_ids: taskIds }));
+    dispatch(bulkDeleteTasks({ task_ids: taskIds })).then(() => {
+      dispatch(fetchTasks());
+    });
     setSelectedTasks([]);
   };
 
@@ -61,7 +65,9 @@ export default function TasksPage() {
       alert("Task title and description cannot be empty");
       return;
     }
-    dispatch(updateTask({ id: editingTask.id, task: { title: editTaskTitle, description: editTaskDescription } }));
+    dispatch(updateTask({ id: editingTask.id, task: { title: editTaskTitle, description: editTaskDescription } })).then(() => {
+      dispatch(fetchTasks());
+    });
     setEditingTask(null);
     setEditTaskTitle("");
     setEditTaskDescription("");

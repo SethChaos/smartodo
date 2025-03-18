@@ -11,3 +11,13 @@ class Task(Base):
     is_complete = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     updated_at = Column(DateTime, onupdate=datetime.datetime.utcnow)
+
+class UpdatedTaskCount(Base):
+    __tablename__ = "updated_task_count"
+    id = Column(Integer, primary_key=True, index=True)
+    count = Column(Integer, default=0)
+
+class DeletedTaskCount(Base):
+    __tablename__ = "deleted_task_count"
+    id = Column(Integer, primary_key=True, index=True)
+    count = Column(Integer, default=0)
