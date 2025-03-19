@@ -89,7 +89,7 @@ const SidebarItems = () => {
         <Box sx={{ px: "20px", overflowX: 'hidden' }}>
             <MUI_Sidebar width={"100%"} showProfile={false} themeColor={"#0085db"} themeSecondaryColor={'#0085db1a'}>
                 <Box sx={{ margin: "0 -24px" }}>
-                    <Logo img="/images/logos/logo-dark.svg" component={Link} href="/" >Spike</Logo>
+                    <Logo img="/images/logo.png" component={Link} href="/" >Spike</Logo>
                 </Box>
                 {renderMenuItems(Menuitems, pathDirect)}
             </MUI_Sidebar>

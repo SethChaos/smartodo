@@ -138,22 +138,10 @@ const ProfitExpenses = () => {
     <DashboardCard>
       <>
         {/* Title Bar */}
-        <Box
-          sx={{
-            position: "sticky",
-            top: 0,
-            left: 0,
-            right: 0,
-            backgroundColor: "primary.main",
-            color: "white",
-            padding: 2,
-            zIndex: 1000,
-          }}
-        >
+        
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>
             Task Management
           </Typography>
-        </Box>
 
         {/* Content */}
         <Grid container spacing={3} sx={{ padding: 2 }}>
