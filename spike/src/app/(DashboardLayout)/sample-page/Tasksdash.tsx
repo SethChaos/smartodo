@@ -1,38 +1,33 @@
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect } from "react";
 import { useTheme } from "@mui/material/styles";
 import { Grid, Stack, Typography, Avatar } from "@mui/material";
 import { IconArrowUpLeft } from "@tabler/icons-react";
-
+import { useSelector, useDispatch } from "react-redux";
+import type { RootState, AppDispatch } from "@/redux/store";
+import { fetchDashboardData } from "../../../redux/dashboardSlice"; // Import the Redux action
 import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const TrafficDistribution = () => {
-  // State for dashboard data
-  const [dashboardData, setDashboardData] = useState({
-    total_tasks: 0,
-    modified_tasks: 0,
-    deleted_tasks: 0,
-  });
+  const theme = useTheme();
+  const dispatch: AppDispatch = useDispatch();
 
-  // Fetch dashboard data from the backend
+  // Access dashboard data and status from Redux
+  const { total_tasks, modified_tasks, deleted_tasks } = useSelector(
+    (state: RootState) => state.dashboard.data
+  );
+  const status = useSelector((state: RootState) => state.dashboard.status);
+
+  // Fetch dashboard data when the component mounts
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        const response = await axios.get<{ total_tasks: number; modified_tasks: number; deleted_tasks: number }>("http://localhost:8000/dashboard");
-        setDashboardData(response.data);
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-      }
-    };
-
-    fetchDashboardData();
-  }, []);
+    if (status === "idle") {
+      dispatch(fetchDashboardData());
+    }
+  }, [dispatch, status]);
 
   // Chart colors
-  const theme = useTheme();
   const primary = theme.palette.primary.main;
   const error = theme.palette.error.main;
   const secondary = theme.palette.secondary.light;
@@ -85,11 +80,7 @@ const TrafficDistribution = () => {
   };
 
   // Chart data
-  const seriescolumnchart: any = [
-    dashboardData.total_tasks,
-    dashboardData.deleted_tasks,
-    dashboardData.modified_tasks,
-  ];
+  const seriescolumnchart: any = [total_tasks, deleted_tasks, modified_tasks];
 
   return (
     <DashboardCard title="Task Dashboard">
@@ -97,7 +88,7 @@ const TrafficDistribution = () => {
         {/* Column 1: Task Summary */}
         <Grid item xs={6} sm={7}>
           <Typography variant="h3" sx={{ fontWeight: "700" }}>
-            {dashboardData.total_tasks} Tasks
+            {total_tasks} Tasks
           </Typography>
           <Stack
             direction={{ xs: "column", sm: "row" }}
@@ -109,11 +100,11 @@ const TrafficDistribution = () => {
                 <IconArrowUpLeft width={18} color="#39B69A" />
               </Avatar>
               <Typography variant="subtitle2" sx={{ fontWeight: "600" }}>
-                +{dashboardData.modified_tasks} Updated
+                +{modified_tasks} Updated
               </Typography>
             </Stack>
             <Typography variant="subtitle2" color="textSecondary">
-              {dashboardData.deleted_tasks} Deleted
+              {deleted_tasks} Deleted
             </Typography>
           </Stack>
           <Stack spacing={3} direction="row" sx={{ mt: 3 }}>

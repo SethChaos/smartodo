@@ -4,6 +4,8 @@ import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import "./global.css";
 import { DashboardContextProvider } from './context/DashboardContext';
+import { Provider } from 'react-redux';
+import store from '@/redux/store';
 
 export default function RootLayout({
   children,
@@ -14,10 +16,11 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <ThemeProvider theme={baselightTheme}>
-          {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
           <DashboardContextProvider>
-            <CssBaseline />
-            {children}
+            <Provider store={store}>
+              <CssBaseline />
+              {children}
+            </Provider>
           </DashboardContextProvider>
         </ThemeProvider>
       </body>

@@ -3,6 +3,9 @@ import { styled, Container, Box } from "@mui/material";
 import React, { useState } from "react";
 import Sidebar from "@/app/(DashboardLayout)/layout/sidebar/Sidebar";
 import theme from "@/utils/theme";
+import { ReactNode } from 'react';
+import { Provider } from 'react-redux';
+import store from '@/redux/store'; // Import the Redux store
 
 const MainWrapper = styled("div")(() => ({
   display: "flex",
@@ -18,61 +21,61 @@ const PageWrapper = styled("div")(() => ({
   backgroundColor: "transparent",
 }));
 
+interface LayoutProps {
+  children: ReactNode;
+}
 
-
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-
+const DashboardLayout = ({ children }: LayoutProps) => {
   return (
-    <MainWrapper className="mainwrapper">
+    <Provider store={store}>
+      <MainWrapper className="mainwrapper">
 
-      <PageWrapper className="page-wrapper">
+        <PageWrapper className="page-wrapper">
 
 
-        {/* ------------------------------------------- */}
-        {/* Sidebar */}
-        {/* ------------------------------------------- */}
-
-        <Sidebar
-        />
-        {/* ------------------------------------------- */}
-        {/* PageContent */}
-        {/* ------------------------------------------- */}
-        <Box
-          sx={{
-
-            [theme.breakpoints.up("lg")]: {
-              marginLeft: '270px',
-            },
-          }}
-        >
           {/* ------------------------------------------- */}
-          {/* Header */}
+          {/* Sidebar */}
           {/* ------------------------------------------- */}
-          <Container
+
+          <Sidebar
+          />
+          {/* ------------------------------------------- */}
+          {/* PageContent */}
+          {/* ------------------------------------------- */}
+          <Box
             sx={{
-              paddingTop: "20px",
-              maxWidth: "1200px",
-              minHeight: 'calc(100vh - 229px)'
+
+              [theme.breakpoints.up("lg")]: {
+                marginLeft: '270px',
+              },
             }}
           >
-
-
             {/* ------------------------------------------- */}
-            {/* Page Route */}
+            {/* Header */}
             {/* ------------------------------------------- */}
-            <Box>{children}</Box>
+            <Container
+              sx={{
+                paddingTop: "20px",
+                maxWidth: "1200px",
+                minHeight: 'calc(100vh - 229px)'
+              }}
+            >
+
+
+              {/* ------------------------------------------- */}
+              {/* Page Route */}
+              {/* ------------------------------------------- */}
+              <Box>{children}</Box>
 
 
 
-          </Container>
-        </Box>
-      </PageWrapper>
-    </MainWrapper>
+            </Container>
+          </Box>
+        </PageWrapper>
+      </MainWrapper>
+    </Provider>
   );
-}
+};
+
+export default DashboardLayout;
 
