@@ -12,7 +12,6 @@ import {
 import Menuitems from "./MenuItems";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
-import { Upgrade } from "./Updrade";
 import theme from "@/utils/theme";
 
 const renderMenuItems = (items: any[], pathDirect: string) => {

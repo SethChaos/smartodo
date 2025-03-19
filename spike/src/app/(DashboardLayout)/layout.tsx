@@ -1,12 +1,8 @@
 "use client";
 import { styled, Container, Box } from "@mui/material";
 import React, { useState } from "react";
-import Header from "@/app/(DashboardLayout)/layout/header/Header";
 import Sidebar from "@/app/(DashboardLayout)/layout/sidebar/Sidebar";
-
-import Topbar from "./layout/header/Topbar";
 import theme from "@/utils/theme";
-import Footer from "./layout/footer/page";
 
 const MainWrapper = styled("div")(() => ({
   display: "flex",
@@ -57,7 +53,6 @@ export default function RootLayout({
           {/* ------------------------------------------- */}
           {/* Header */}
           {/* ------------------------------------------- */}
-          <Header />
           <Container
             sx={{
               paddingTop: "20px",
@@ -75,7 +70,6 @@ export default function RootLayout({
 
 
           </Container>
-          <Footer />
         </Box>
       </PageWrapper>
     </MainWrapper>

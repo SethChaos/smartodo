@@ -1,59 +1,21 @@
 'use client'
 import { Grid2 as Grid, Box } from '@mui/material';
 import PageContainer from '@/app/(DashboardLayout)/components/container/PageContainer';
-// components
 import ProfitExpenses from '@/app/(DashboardLayout)/components/dashboard/ProfitExpenses';
-import TrafficDistribution from '@/app/(DashboardLayout)/components/dashboard/TrafficDistribution';
-import UpcomingSchedules from '@/app/(DashboardLayout)/components/dashboard/UpcomingSchedules';
-import TopPayingClients from '@/app/(DashboardLayout)/components/dashboard/TopPayingClients';
-import Blog from '@/app/(DashboardLayout)/components/dashboard/Blog';
-import ProductSales from '@/app/(DashboardLayout)/components/dashboard/ProductSales';
 
+//this is the main page
 const Dashboard = () => {
   return (
-    (<PageContainer title="Dashboard" description="this is Dashboard">
+    (<PageContainer title="Tasks Management" description="this is Tasks Management page">
       <Box>
-        <Grid container spacing={3}>
           <Grid
             size={{
               xs: 12,
-              lg: 8
+              lg: 12
             }}>
             <ProfitExpenses />
           </Grid>
-          <Grid
-            size={{
-              xs: 12,
-              lg: 4
-            }}>
-            <Grid container spacing={3}>
-              <Grid size={12}>
-                <TrafficDistribution />
-              </Grid>
-              <Grid size={12}>
-                <ProductSales />
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid
-            size={{
-              xs: 12,
-              lg: 4
-            }}>
-            <UpcomingSchedules />
-          </Grid>
-          <Grid
-            size={{
-              xs: 12,
-              lg: 8
-            }}>
-            <TopPayingClients />
-          </Grid>
-          <Grid size={12}>
-            <Blog />
-          </Grid>
-        </Grid>
-      </Box>
+        </Box>
     </PageContainer>)
   );
 }
